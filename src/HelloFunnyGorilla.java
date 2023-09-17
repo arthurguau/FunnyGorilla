@@ -10,19 +10,22 @@ public class HelloFunnyGorilla {
 	
 	public static void main(String[] args) {
 		
-		System.out.println("Hello, FunnyGorilla!");
+		System.out.println("------> Hello, FunnyGorilla!");
 		
 	    InputStreamReader in= new InputStreamReader(System.in);
 	    BufferedReader input = new BufferedReader(in);
-	    String str;
+	    String str = "";
 	 
 	    System.out.print("Student ID: :");
-	    int id = -1;
+	    int id = -1; // assign an initial value
         try {
 			while ((str = input.readLine()) != null) {
 			    
 				//------- business logic
 				id = Integer.valueOf(str);
+				
+				//-- if id 0, quit the program
+				if (0== id) break;
 			    
 				String detail = getStudentDetail (id);
 				
@@ -33,6 +36,8 @@ public class HelloFunnyGorilla {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}		
+        
+        System.out.println("Good Bye, FunnyGorilla! See you next time!");
 		
 	}
 	
@@ -58,21 +63,33 @@ public class HelloFunnyGorilla {
 	 */
 	public static String checkDB (int studentID) {
 		
-		System.out.println("-----> ID: " + studentID);
+		System.out.println("Checking information for student : " + studentID);
 		
-		String student = "Funny Gorilla";
+		String student = ""; // assign an empty value
 		Connection con = null;
 		Statement stmt = null;
+		ResultSet rst = null;
 		try{  
+			// load MySQL JDBC driver 
 			Class.forName("com.mysql.cj.jdbc.Driver");  
 			
-			//here studentmanagement is database name, root is username and password 
-		    con = DriverManager.getConnection("jdbc:mysql://localhost:3306/studentmanagement","root","root");  			 
+			// create a DB Connection with student-management DB, with user name and password 
+			// JDBC Database connection string: jdbc:mysql://${host}:3306/${databaseName}
+		    con = DriverManager.getConnection("jdbc:mysql://localhost:3306/studentmanagement","root","root");  
+		    
+		    // create a Statement;
 			stmt = con.createStatement();  
-			ResultSet rs = stmt.executeQuery("select * from Student where student_id = " + studentID + ";");  
 			
-			while(rs.next())  
-			  student = rs.getInt(1) + " " + rs.getString(2) + " " + rs.getString(3) + " " + rs.getString(4) + " " + rs.getString(5);  
+			// execute a SQL query and return a ResultSet of query string
+			rst = stmt.executeQuery("select * from Student where student_id = " + studentID + ";");  
+			
+			// fetch data from query result
+			while(rst.next())  
+			  student = rst.getInt(1)     // get Student ID
+		 	    + " " + rst.getString(2)  // get First Name
+			    + " " + rst.getString(3)  // get Last Name
+			    + " " + rst.getString(4)  // get Contact
+			    + " " + rst.getString(5); // get Course 
 			}catch(Exception e){ 
 				System.out.println(e);
 		    }  
